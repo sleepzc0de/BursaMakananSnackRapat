@@ -3,17 +3,17 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id       String @id @default(cuid())
-  email    String @unique
-  password String
-  name     String
-  role     Role   @default(USER)
-  ratings  Rating[]
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(USER)
+  ratings   Rating[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -21,20 +21,20 @@ model User {
 }
 
 model Provider {
-  id                String   @id @default(cuid())
-  name             String
-  canGiveReceipt   Boolean  @default(false)
-  hasStamp         Boolean  @default(false)
-  canCredit        Boolean  @default(false)
-  description      String?  @db.Text
-  address          String?
-  phone            String?
-  ratings          Rating[]
-  foods            Food[]
-  averageRating    Float    @default(0)
-  totalRatings     Int      @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id             String   @id @default(cuid())
+  name           String
+  canGiveReceipt Boolean  @default(false)
+  hasStamp       Boolean  @default(false)
+  canCredit      Boolean  @default(false)
+  description    String?  @db.Text
+  address        String?
+  phone          String?
+  ratings        Rating[]
+  foods          Food[]
+  averageRating  Float    @default(0)
+  totalRatings   Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@map("providers")
 }
@@ -57,7 +57,7 @@ model Food {
 
 model Rating {
   id         String   @id @default(cuid())
-  rating     Int      @db.TinyInt
+  rating     Int
   comment    String?  @db.Text
   userId     String
   providerId String
