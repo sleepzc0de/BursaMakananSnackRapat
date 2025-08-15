@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+  name     String
+  role     Role   @default(USER)
+  ratings  Rating[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Provider {
+  id                String   @id @default(cuid())
+  name             String
+  canGiveReceipt   Boolean  @default(false)
+  hasStamp         Boolean  @default(false)
+  canCredit        Boolean  @default(false)
+  description      String?  @db.Text
+  address          String?
+  phone            String?
+  ratings          Rating[]
+  foods            Food[]
+  averageRating    Float    @default(0)
+  totalRatings     Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("providers")
+}
+
+model Food {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  price       Decimal? @db.Decimal(10,2)
+  category    String
+  isAvailable Boolean  @default(true)
+  imageUrl    String?
+  providerId  String
+  provider    Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("foods")
+}
+
+model Rating {
+  id         String   @id @default(cuid())
+  rating     Int      @db.TinyInt
+  comment    String?  @db.Text
+  userId     String
+  providerId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider   Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, providerId])
+  @@map("ratings")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
